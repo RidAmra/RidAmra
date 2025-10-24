@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>الشاشة الرئيسية - قاعدة بيانات العائلة</title>
+<link href="https://fonts.googleapis.com/css2?family=Amiri&family=Scheherazade+New&display=swap" rel="stylesheet">
+<style>
+    body {
+        font-family: 'Amiri', serif;
+        background-color: #f0f7f7; /* خلفية فاتحة وناعمة */
+        margin: 0;
+        padding: 0;
+        color: #111; /* نص أسود غامق */
+    }
+    header {
+        background-color: #a8dadc; /* أزرق فاتح وهادئ */
+        color: #111; /* نص أسود غامق */
+        padding: 20px;
+        text-align: center;
+        font-family: 'Scheherazade New', serif;
+        font-size: 24px;
+        box-shadow: 0 3px 8px rgba(0,0,0,0.1);
+    }
+    nav {
+        display: flex;
+        background-color: #457b9d; /* أزرق متوسط */
+    }
+    nav button {
+        flex: 1;
+        padding: 15px;
+        background-color: #457b9d;
+        color: white;
+        border: none;
+        cursor: pointer;
+        font-size: 16px;
+        transition: all 0.3s ease;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    }
+    nav button:hover, nav button.active {
+        background-color: #a8dadc; /* لون ناعم عند المرور */
+        color: #111;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    }
+    .tab-content {
+        display: none;
+        padding: 30px;
+        background-color: #ffffff;
+        margin: 20px auto;
+        border-radius: 16px;
+        box-shadow: 0 8px 20px rgba(0,0,0,0.05);
+        max-width: 800px;
+        transition: all 0.3s ease;
+        color: #111; /* نص أسود غامق */
+    }
+    .tab-content.active {
+        display: block;
+    }
+    h3 {
+        text-align: center;
+        margin-bottom: 20px;
+        font-family: 'Scheherazade New', serif;
+        color: #111; /* نص أسود غامق */
+    }
+    form {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px 30px;
+    }
+    label {
+        display: flex;
+        flex-direction: column;
+        font-weight: bold;
+        color: #111; /* نص أسود غامق */
+        font-size: 16px;
+    }
+    input, select, button {
+        padding: 12px;
+        border-radius: 10px;
+        border: 1px solid #dbe9ea;
+        font-size: 16px;
+        width: 100%;
+        box-sizing: border-box;
+        transition: all 0.3s ease;
+        color: #111; /* نص أسود غامق */
+    }
+    input:focus, select:focus {
+        border-color: #a8dadc;
+        box-shadow: 0 0 10px rgba(168,218,220,0.3);
+        outline: none;
+    }
+    button {
+        grid-column: span 2;
+        background-color: #a8dadc;
+        color: #111;
+        border: none;
+        cursor: pointer;
+        font-size: 18px;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+    }
+    button:hover {
+        background-color: #457b9d;
+        color: white;
+        transform: translateY(-1px);
+        box-shadow: 0 6px 12px rgba(0,0,0,0.1);
+    }
+    .error {
+        color: #e63946;
+        font-size: 14px;
+        margin-top: 5px;
+    }
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+        font-family: 'Noto Sans Arabic', sans-serif;
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        color: #111; /* نص أسود غامق */
+    }
+    th, td {
+        border: 1px solid #dbe9ea;
+        padding: 12px;
+        text-align: center;
+        transition: background 0.3s;
+    }
+    th {
+        background-color: #a8dadc;
+        color: #111; /* نص أسود غامق */
+    }
+    tr:nth-child(even) {
+        background-color: #f1f7f7;
+    }
+    tr:hover {
+        background-color: #dbe9ea;
+    }
+    #searchInput {
+        padding: 12px;
+        width: 100%;
+        border-radius: 10px;
+        border: 1px solid #dbe9ea;
+        margin-bottom: 10px;
+        font-size: 16px;
+        transition: all 0.3s ease;
+        color: #111; /* نص أسود غامق */
+    }
+    #searchInput:focus {
+        border-color: #a8dadc;
+        box-shadow: 0 0 10px rgba(168,218,220,0.3);
+        outline: none;
+    }
+</style>
+</head>
+<body>
+<header>مرحباً، <span id="usernameDisplay">المستخدم</span></header>
+
+<nav>
+    <button class="tab-btn active" data-tab="addFamily">إضافة عائلة</button>
+    <button class="tab-btn" data-tab="search">بحث</button>
+    <button class="tab-btn" data-tab="reports">التقارير</button>
+    <button class="tab-btn" data-tab="users">صلاحيات المستخدمين</button>
+    <button class="tab-btn" data-tab="logout">تسجيل الخروج</button>
+</nav>
+
+<div id="addFamily" class="tab-content active">
+    <h3>إضافة عائلة جديدة</h3>
+    <form id="addForm">
+        <label>
+            رقم الهوية:
+            <input type="text" id="familyID" placeholder="مثال: 123456789" required>
+            <span class="error" id="idError"></span>
+        </label>
+        <label>
+            اسم رب العائلة:
+            <input type="text" id="headName" placeholder="أدخل الاسم الكامل" required>
+        </label>
+        <label>
+            عدد أفراد الأسرة:
+            <input type="number" id="membersCount" placeholder="عدد الأفراد" min="1" required>
+        </label>
+        <label>
+            رقم الجوال:
+            <input type="text" id="mobileNumber" placeholder="مثال: 0501234567" required>
+            <span class="error" id="mobileError"></span>
+        </label>
+        <label>
+            الربع:
+            <select id="quarterName" required>
+                <option value="">اختر الربع</option>
+                <option value="أبو نصرالله">أبو نصرالله</option>
+                <option value="شنون">شنون</option>
+                <option value="بركات">بركات</option>
+                <option value="اعطيوي">اعطيوي</option>
+                <option value="كرور">كرور</option>
+                <option value="قحوص">قحوص</option>
+                <option value="سمامرة">سمامرة</option>
+            </select>
+        </label>
+        <button type="submit">إضافة العائلة</button>
+    </form>
+</div>
+
+<div id="search" class="tab-content">
+    <h3>بحث عن عائلة</h3>
+    <input type="text" id="searchInput" placeholder="أدخل الاسم أو رقم الهوية للبحث" oninput="searchFamily()">
+    <table id="familiesTable">
+        <tr>
+            <th>رقم الهوية</th><th>اسم رب العائلة</th><th>عدد الأفراد</th><th>رقم الجوال</th><th>الربع</th>
+        </tr>
+    </table>
+</div>
+
+<div id="reports" class="tab-content">
+    <h3>التقارير</h3>
+    <p>سيتم عرض التقارير هنا...</p>
+</div>
+
+<div id="users" class="tab-content">
+    <h3>صلاحيات المستخدمين</h3>
+    <p>يمكن إدارة صلاحيات المستخدمين هنا...</p>
+</div>
+
+<div id="logout" class="tab-content">
+    <h3>تسجيل الخروج</h3>
+    <p>اضغط على زر تسجيل الخروج لإنهاء الجلسة.</p>
+    <button onclick="logout()">تسجيل الخروج</button>
+</div>
+
+<script>
+document.getElementById('usernameDisplay').innerText = localStorage.getItem('username') || 'المستخدم';
+
+let tabButtons = document.querySelectorAll('.tab-btn');
+tabButtons.forEach(btn => {
+    btn.addEventListener('click', function(){
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        this.classList.add('active');
+        let tabId = this.getAttribute('data-tab');
+        document.querySelectorAll('.tab-content').forEach(tc => tc.classList.remove('active'));
+        document.getElementById(tabId).classList.add('active');
+    });
+});
+
+const families = [];
+
+document.getElementById('addForm').addEventListener('submit', function(e){
+    e.preventDefault();
+    document.getElementById('idError').innerText = '';
+    document.getElementById('mobileError').innerText = '';
+    const familyID = document.getElementById('familyID').value.trim();
+    const headName = document.getElementById('headName').value.trim();
+    const membersCount = document.getElementById('membersCount').value.trim();
+    const mobileNumber = document.getElementById('mobileNumber').value.trim();
+    const quarter = document.getElementById('quarterName').value;
+    let valid = true;
+    if(!/^\d{9}$/.test(familyID)){
+        document.getElementById('idError').innerText = "رقم الهوية يجب أن يحتوي على 9 أرقام فقط";
+        valid = false;
+    }
+    if(!/^\d{10}$/.test(mobileNumber)){
+        document.getElementById('mobileError').innerText = "رقم الجوال يجب أن يحتوي على 10 أرقام فقط";
+        valid = false;
+    }
+    if(!valid) return;
+    families.push({FamilyID: familyID, HeadName: headName, MembersCount: membersCount, MobileNumber: mobileNumber, Quarter: quarter});
+    alert("تمت إضافة العائلة بنجاح!");
+    this.reset();
+    displayFamilies();
+});
+
+function displayFamilies() {
+    const table = document.getElementById('familiesTable');
+    table.innerHTML = `<tr>
+        <th>رقم الهوية</th><th>اسم رب العائلة</th><th>عدد الأفراد</th><th>رقم الجوال</th><th>الربع</th>
+    </tr>`;
+    families.forEach(f => {
+        let row = table.insertRow();
+        row.innerHTML = `<td>${f.FamilyID}</td><td>${f.HeadName}</td><td>${f.MembersCount}</td><td>${f.MobileNumber}</td><td>${f.Quarter}</td>`;
+    });
+}
+
+function searchFamily() {
+    const keyword = document.getElementById('searchInput').value.toLowerCase();
+    const results = families.filter(f => f.FamilyID.includes(keyword) || f.HeadName.toLowerCase().includes(keyword));
+    const table = document.getElementById('familiesTable');
+    table.innerHTML = `<tr>
+        <th>رقم الهوية</th><th>اسم رب العائلة</th><th>عدد الأفراد</th><th>رقم الجوال</th><th>الربع</th>
+    </tr>`;
+    results.forEach(f => {
+        let row = table.insertRow();
+        row.innerHTML = `<td>${f.FamilyID}</td><td>${f.HeadName}</td><td>${f.MembersCount}</td><td>${f.MobileNumber}</td><td>${f.Quarter}</td>`;
+    });
+}
+
+function logout() {
+    localStorage.removeItem('username');
+    alert("تم تسجيل الخروج");
+}
+</script>
+</body>
+</html>
